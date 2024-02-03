@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 import java.util.Date;
 
 @Component
-public class JwtTokenProvider {
+public class JwtGenerador {
 
     //Metodo para crear un token por medio de la autenticación
     public String generarToken(Authentication authentication){
