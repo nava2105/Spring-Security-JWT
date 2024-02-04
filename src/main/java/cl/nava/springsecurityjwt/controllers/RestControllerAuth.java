@@ -41,7 +41,7 @@ public class RestControllerAuth {
         this.jwtGenerador = jwtGenerador;
     }
     //Metodo para poder registrar usuarios con rol user
-    @PostMapping("registro")
+    @PostMapping("register")
     public ResponseEntity<String> registrar(@RequestBody DtoRegistro dtoRegistro){
         if (usuariosRepository.existsByUserName(dtoRegistro.getUsername())) {
             return new ResponseEntity<>("El usuario ya existe, intenta con otro", HttpStatus.BAD_REQUEST);
@@ -55,10 +55,10 @@ public class RestControllerAuth {
         return new ResponseEntity<>("Registro de usuario exitoso", HttpStatus.OK);
     }
     //Metodo para poder registrar usuarios con rol admin
-    @PostMapping("registroAdmin")
+    @PostMapping("registerAdmin")
     public ResponseEntity<String> registrarAdmin(@RequestBody DtoRegistro dtoRegistro){
         if (usuariosRepository.existsByUserName(dtoRegistro.getUsername())) {
-            return new ResponseEntity<>("El usuario ya existe, intenta con otro", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("El admin ya existe, intenta con otro", HttpStatus.BAD_REQUEST);
         }
         Usuarios usuarios = new Usuarios();
         usuarios.setUserName(dtoRegistro.getUsername());
@@ -66,7 +66,7 @@ public class RestControllerAuth {
         Roles roles = rolesRepository.findByName("ADMIN").get();
         usuarios.setRoles(Collections.singletonList(roles));
         usuariosRepository.save(usuarios);
-        return new ResponseEntity<>("Registro de usuario exitoso", HttpStatus.OK);
+        return new ResponseEntity<>("Registro de admin exitoso", HttpStatus.OK);
     }
     //Metodo para poder logear un usuario y obtener un token
     @PostMapping("login")
