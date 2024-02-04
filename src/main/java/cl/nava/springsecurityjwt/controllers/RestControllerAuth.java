@@ -58,7 +58,7 @@ public class RestControllerAuth {
     @PostMapping("registerAdmin")
     public ResponseEntity<String> registrarAdmin(@RequestBody DtoRegistro dtoRegistro){
         if (usuariosRepository.existsByUserName(dtoRegistro.getUsername())) {
-            return new ResponseEntity<>("El admin ya existe, intenta con otro", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("El usuario ya existe, intenta con otro", HttpStatus.BAD_REQUEST);
         }
         Usuarios usuarios = new Usuarios();
         usuarios.setUserName(dtoRegistro.getUsername());
