@@ -19,8 +19,8 @@ public class Usuarios {
     @Column(name = "id_usuario")
     private Long idUsuario;
     private String userName;
+    private String password;
     private String correo;
-    private String contrasena;
     private double pesoActual;
     private double pesoObjetivo;
     private double estatura;
@@ -39,6 +39,7 @@ public class Usuarios {
     private double proteina;
     private double carbohidratos;
     private double grasas;
+
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "usuario_roles", joinColumns = @JoinColumn(name = "usuario_id", referencedColumnName = "id_usuario")
     , inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id_role"))

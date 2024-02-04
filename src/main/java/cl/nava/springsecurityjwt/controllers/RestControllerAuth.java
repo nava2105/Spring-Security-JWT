@@ -48,7 +48,7 @@ public class RestControllerAuth {
         }
         Usuarios usuarios = new Usuarios();
         usuarios.setUserName(dtoRegistro.getUsername());
-        usuarios.setContrasena(passwordEncoder.encode(dtoRegistro.getPassword()));
+        usuarios.setPassword(passwordEncoder.encode(dtoRegistro.getPassword()));
         Roles roles = rolesRepository.findByName("USER").get();
         usuarios.setRoles(Collections.singletonList(roles));
         usuariosRepository.save(usuarios);
@@ -62,7 +62,7 @@ public class RestControllerAuth {
         }
         Usuarios usuarios = new Usuarios();
         usuarios.setUserName(dtoRegistro.getUsername());
-        usuarios.setContrasena(passwordEncoder.encode(dtoRegistro.getPassword()));
+        usuarios.setPassword(passwordEncoder.encode(dtoRegistro.getPassword()));
         Roles roles = rolesRepository.findByName("ADMIN").get();
         usuarios.setRoles(Collections.singletonList(roles));
         usuariosRepository.save(usuarios);
