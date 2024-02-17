@@ -17,28 +17,28 @@ public class Usuarios {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_usuario")
-    private Long idUsuario;
+    private Long userId;
     private String userName;
     private String password;
-    private String correo;
-    private double pesoActual;
-    private double pesoObjetivo;
-    private double estatura;
-    private int edad;
-    private String genero;
-    private String objetivo;
-    private String ejercicioFrecuente;
-    private String tipoEjerciocio;
-    private double mediadaCintura;
-    private double mediadaCadera;
-    private double medidaCuello;
-    private double grasaCorporal;
-    private int iniciosSesion;
+    private double height;
+    private double weight;
+    private int age;
+    private String genre;
+    private String activityFactor;
+    private String objective;
+    private String activity;
+    private double hidratation;
+    private double neck;
+    private double hip;
+    private double waist;
+    private double fat_percent;
+    private int sessionsHistory;
     private boolean premium;
-    private double calorias;
-    private double proteina;
-    private double carbohidratos;
-    private double grasas;
+    private double maintenanceCalories;
+    private double objectiveCalories;
+    private double protein;
+    private double carbs;
+    private double fat;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "usuario_roles", joinColumns = @JoinColumn(name = "usuario_id", referencedColumnName = "id_usuario")
