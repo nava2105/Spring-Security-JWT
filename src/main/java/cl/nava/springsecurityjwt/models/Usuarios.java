@@ -26,7 +26,6 @@ public class Usuarios {
     private String genre;
     private String activityFactor;
     private String objective;
-    private String activity;
     private double hidratation;
     private double neck;
     private double hip;
