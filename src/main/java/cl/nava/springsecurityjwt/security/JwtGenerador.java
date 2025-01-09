@@ -19,13 +19,12 @@ public class JwtGenerador {
         Date tokenExpiration = new Date(actualTime.getTime() + SecurityConstants.JWT_EXPIRATION_TOKEN);
 
         // Line to generate the token
-        String token = Jwts.builder()
+        return Jwts.builder()
                 .setSubject(userName)
                 .setIssuedAt(new Date())
                 .setExpiration(tokenExpiration)
                 .signWith(SignatureAlgorithm.HS512, SecurityConstants.JWT_FIRMA)
                 .compact();
-        return token;
     }
 
     // Method to extract a username from a token

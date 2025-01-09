@@ -26,46 +26,46 @@ import java.util.Collections;
 @RestController
 @RequestMapping("/api/auth/")
 public class RestControllerAuth {
-    private AuthenticationManager authenticationManager;
-    private PasswordEncoder passwordEncoder;
-    private IRolesRepository rolesRepository;
-    private IUsersRepository usuariosRepository;
-    private JwtGenerador jwtGenerador;
+    private final AuthenticationManager authenticationManager;
+    private final PasswordEncoder passwordEncoder;
+    private final IRolesRepository rolesRepository;
+    private final IUsersRepository userRepository;
+    private final JwtGenerador jwtGenerador;
 
     @Autowired
-    public RestControllerAuth(AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder, IRolesRepository rolesRepository, IUsersRepository usuariosRepository, JwtGenerador jwtGenerador) {
+    public RestControllerAuth(AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder, IRolesRepository rolesRepository, IUsersRepository userRepository, JwtGenerador jwtGenerador) {
         this.authenticationManager = authenticationManager;
         this.passwordEncoder = passwordEncoder;
         this.rolesRepository = rolesRepository;
-        this.usuariosRepository = usuariosRepository;
+        this.userRepository = userRepository;
         this.jwtGenerador = jwtGenerador;
     }
     // Method to be able to register users with role user
     @PostMapping("register")
     public ResponseEntity<String> register(@RequestBody DtoRegister dtoRegister){
-        if (usuariosRepository.existsByUserName(dtoRegister.getUsername())) {
+        if (userRepository.existsByUserName(dtoRegister.getUsername())) {
             return new ResponseEntity<>("The user already exists, try another one", HttpStatus.BAD_REQUEST);
         }
         Users users = new Users();
         users.setUserName(dtoRegister.getUsername());
         users.setPassword(passwordEncoder.encode(dtoRegister.getPassword()));
-        Roles roles = rolesRepository.findByName("USER").get();
+        Roles roles = rolesRepository.findByName("USER").orElseThrow(() -> new IllegalArgumentException("Role USER not found"));
         users.setRoles(Collections.singletonList(roles));
-        usuariosRepository.save(users);
+        userRepository.save(users);
         return new ResponseEntity<>("Successful user registration", HttpStatus.OK);
     }
     // Method to be able to register users with admin role
     @PostMapping("registerAdmin")
     public ResponseEntity<String> registerAdmin(@RequestBody DtoRegister dtoRegister){
-        if (usuariosRepository.existsByUserName(dtoRegister.getUsername())) {
+        if (userRepository.existsByUserName(dtoRegister.getUsername())) {
             return new ResponseEntity<>("The user already exists, try another one", HttpStatus.BAD_REQUEST);
         }
         Users users = new Users();
         users.setUserName(dtoRegister.getUsername());
         users.setPassword(passwordEncoder.encode(dtoRegister.getPassword()));
-        Roles roles = rolesRepository.findByName("ADMIN").get();
+        Roles roles = rolesRepository.findByName("ADMIN").orElseThrow(() -> new IllegalArgumentException("Role USER not found"));
         users.setRoles(Collections.singletonList(roles));
-        usuariosRepository.save(users);
+        userRepository.save(users);
         return new ResponseEntity<>("Successful admin registration", HttpStatus.OK);
     }
     // Method to be able to log in a user and get a token

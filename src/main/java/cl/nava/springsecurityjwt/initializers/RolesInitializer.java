@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class RolesInitializer implements CommandLineRunner {
 
-    private IRolesRepository rolesRepository;
+    private final IRolesRepository rolesRepository;
 
     @Autowired
     public RolesInitializer(IRolesRepository rolesRepository) {
@@ -17,7 +17,7 @@ public class RolesInitializer implements CommandLineRunner {
     }
 
     @Override
-    public void run(String... args) throws Exception {
+    public void run(String... args) {
         // Check if the role "ADMIN" exists, if not, it is created.
         if (rolesRepository.findByName("ADMIN").isEmpty()) {
             Roles adminRole = new Roles();
