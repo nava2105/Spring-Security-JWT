@@ -1,14 +1,12 @@
 package cl.nava.springsecurityjwt.controllers;
 
-import cl.nava.springsecurityjwt.dtos.DtoAuthResponse;
-import cl.nava.springsecurityjwt.dtos.DtoLogin;
-import cl.nava.springsecurityjwt.dtos.DtoRegister;
-import cl.nava.springsecurityjwt.dtos.DtoAssignRole;
+import cl.nava.springsecurityjwt.dtos.*;
 import cl.nava.springsecurityjwt.models.Roles;
 import cl.nava.springsecurityjwt.models.Users;
 import cl.nava.springsecurityjwt.repositories.IRolesRepository;
 import cl.nava.springsecurityjwt.repositories.IUsersRepository;
 import cl.nava.springsecurityjwt.security.JwtGenerador;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -53,7 +51,7 @@ public class RestControllerAuth {
         return new ResponseEntity<>("Successful user registration", HttpStatus.OK);
     }
     // Method to be able to register users with admin role
-    @PostMapping("registerAdmin")
+    @PostMapping("register/admin")
     public ResponseEntity<String> registerAdmin(@RequestBody DtoRegister dtoRegister){
         if (userRepository.existsByUserName(dtoRegister.getUsername())) {
             return new ResponseEntity<>("The user already exists, try another one", HttpStatus.BAD_REQUEST);
@@ -76,7 +74,7 @@ public class RestControllerAuth {
         return new ResponseEntity<>(new DtoAuthResponse(token), HttpStatus.OK);
     }
     // Method to assign a new role to an existing user
-    @PostMapping("assignRole")
+    @PostMapping("assign/role")
     public ResponseEntity<String> assignRole(@RequestBody DtoAssignRole dtoAssignRole) {
         Users user = userRepository.findByUserName(dtoAssignRole.getUsername())
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
@@ -89,8 +87,32 @@ public class RestControllerAuth {
         userRepository.save(user);
         return new ResponseEntity<>("Role assigned successfully", HttpStatus.OK);
     }
-    @GetMapping("validateToken")
+    @GetMapping("validate/token")
     public ResponseEntity<?> validateToken() {
         return new ResponseEntity<>("Valid token", HttpStatus.OK);
+    }
+    @GetMapping("user_id/token")
+    public ResponseEntity<DtoUserIdFromToken> userIdFromToken(HttpServletRequest request) {
+        String authHeader = request.getHeader("Authorization");
+
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        String token = authHeader.substring(7); // Remove "Bearer " prefix
+        try {
+            if (jwtGenerador.validateToken(token)) {
+                String username = jwtGenerador.getUserNameFromJwt(token);
+                Long userId = userRepository.findByUserName(username)
+                        .map(Users::getUserId)
+                        .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+                DtoUserIdFromToken dtoUserIdFromToken = new DtoUserIdFromToken(userId);
+                return new ResponseEntity<>(dtoUserIdFromToken, HttpStatus.OK);
+            }
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        } catch (Exception ex) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
     }
 }

@@ -105,7 +105,7 @@ Once the application is up and running, you can interact with the API by perform
   ```
 
 ### Register an Admin (Admin Only):
-- Endpoint: `/api/auth/registerAdmin`
+- Endpoint: `/api/auth/register/admin`
 - Headers:
   ```
   Authorization: Bearer your_jwt_token
@@ -136,7 +136,7 @@ Once the application is up and running, you can interact with the API by perform
   ```
 
 ### Assign Role (Admin Only):
-- Endpoint: `/api/auth/assignRole`
+- Endpoint: `/api/auth/assign/role`
 - Headers:
   ```
   Authorization: Bearer your_jwt_token
@@ -150,7 +150,18 @@ Once the application is up and running, you can interact with the API by perform
   ```
 
 ### Validate Token:
-- Endpoint: `/api/auth/validateToken`
+- Endpoint: `/api/auth/validate/token`
+- Headers:
+  ```
+  Authorization: Bearer your_jwt_token
+  ```
+- Payload:
+  ```json
+  {}
+  ```
+
+### Get User Id From Token:
+- Endpoint: `/api/auth/user_id/token`
 - Headers:
   ```
   Authorization: Bearer your_jwt_token
@@ -178,20 +189,25 @@ Below is a comprehensive list of the endpoints included in the project:
 
 ### Protected Endpoints (Authentication Required)
 - **Register Admin**
-  - `POST /api/auth/registerAdmin`
+  - `POST /api/auth/register/admin`
   - Allows admin users to register new users with the `ADMIN` role.
   - Requires `ADMIN` privilege.
 
 - **Assign Role**
-  - `POST /api/auth/assignRole`
+  - `POST /api/auth/assign/role`
   - Allows admins to assign roles (`ADMIN`, `USER`) to existing users.
   - Requires `ADMIN` privilege.
 
 - **Validate Token**
-  - `GET /api/auth/validateToken`
+  - `GET /api/auth/validate/token`
   - Allows other APIs to validate the validity of the token.
   - Requires the JWT.
 
+- **Get User Id From Token**
+  - `GET /api/auth/user_id/token`
+  - Allows other APIs to validate the validity of the token.
+  - Requires the JWT.
+  - 
 ---
 
 ## Configuration and Notes
