@@ -1,12 +1,12 @@
 package cl.nava.springsecurityjwt.controllers;
 
-import cl.nava.springsecurityjwt.dtos.DtoAuthRespuesta;
+import cl.nava.springsecurityjwt.dtos.DtoAuthResponse;
 import cl.nava.springsecurityjwt.dtos.DtoLogin;
-import cl.nava.springsecurityjwt.dtos.DtoRegistro;
+import cl.nava.springsecurityjwt.dtos.DtoRegister;
 import cl.nava.springsecurityjwt.models.Roles;
-import cl.nava.springsecurityjwt.models.Usuarios;
+import cl.nava.springsecurityjwt.models.Users;
 import cl.nava.springsecurityjwt.repositories.IRolesRepository;
-import cl.nava.springsecurityjwt.repositories.IUsuariosRepository;
+import cl.nava.springsecurityjwt.repositories.IUsersRepository;
 import cl.nava.springsecurityjwt.security.JwtGenerador;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,52 +29,52 @@ public class RestControllerAuth {
     private AuthenticationManager authenticationManager;
     private PasswordEncoder passwordEncoder;
     private IRolesRepository rolesRepository;
-    private IUsuariosRepository usuariosRepository;
+    private IUsersRepository usuariosRepository;
     private JwtGenerador jwtGenerador;
 
     @Autowired
-    public RestControllerAuth(AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder, IRolesRepository rolesRepository, IUsuariosRepository usuariosRepository, JwtGenerador jwtGenerador) {
+    public RestControllerAuth(AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder, IRolesRepository rolesRepository, IUsersRepository usuariosRepository, JwtGenerador jwtGenerador) {
         this.authenticationManager = authenticationManager;
         this.passwordEncoder = passwordEncoder;
         this.rolesRepository = rolesRepository;
         this.usuariosRepository = usuariosRepository;
         this.jwtGenerador = jwtGenerador;
     }
-    //Metodo para poder registrar usuarios con rol user
+    // Method to be able to register users with role user
     @PostMapping("register")
-    public ResponseEntity<String> registrar(@RequestBody DtoRegistro dtoRegistro){
-        if (usuariosRepository.existsByUserName(dtoRegistro.getUsername())) {
-            return new ResponseEntity<>("El usuario ya existe, intenta con otro", HttpStatus.BAD_REQUEST);
+    public ResponseEntity<String> register(@RequestBody DtoRegister dtoRegister){
+        if (usuariosRepository.existsByUserName(dtoRegister.getUsername())) {
+            return new ResponseEntity<>("The user already exists, try another one", HttpStatus.BAD_REQUEST);
         }
-        Usuarios usuarios = new Usuarios();
-        usuarios.setUserName(dtoRegistro.getUsername());
-        usuarios.setPassword(passwordEncoder.encode(dtoRegistro.getPassword()));
+        Users users = new Users();
+        users.setUserName(dtoRegister.getUsername());
+        users.setPassword(passwordEncoder.encode(dtoRegister.getPassword()));
         Roles roles = rolesRepository.findByName("USER").get();
-        usuarios.setRoles(Collections.singletonList(roles));
-        usuariosRepository.save(usuarios);
-        return new ResponseEntity<>("Registro de usuario exitoso", HttpStatus.OK);
+        users.setRoles(Collections.singletonList(roles));
+        usuariosRepository.save(users);
+        return new ResponseEntity<>("Successful user registration", HttpStatus.OK);
     }
-    //Metodo para poder registrar usuarios con rol admin
+    // Method to be able to register users with admin role
     @PostMapping("registerAdmin")
-    public ResponseEntity<String> registrarAdmin(@RequestBody DtoRegistro dtoRegistro){
-        if (usuariosRepository.existsByUserName(dtoRegistro.getUsername())) {
-            return new ResponseEntity<>("El usuario ya existe, intenta con otro", HttpStatus.BAD_REQUEST);
+    public ResponseEntity<String> registerAdmin(@RequestBody DtoRegister dtoRegister){
+        if (usuariosRepository.existsByUserName(dtoRegister.getUsername())) {
+            return new ResponseEntity<>("The user already exists, try another one", HttpStatus.BAD_REQUEST);
         }
-        Usuarios usuarios = new Usuarios();
-        usuarios.setUserName(dtoRegistro.getUsername());
-        usuarios.setPassword(passwordEncoder.encode(dtoRegistro.getPassword()));
+        Users users = new Users();
+        users.setUserName(dtoRegister.getUsername());
+        users.setPassword(passwordEncoder.encode(dtoRegister.getPassword()));
         Roles roles = rolesRepository.findByName("ADMIN").get();
-        usuarios.setRoles(Collections.singletonList(roles));
-        usuariosRepository.save(usuarios);
-        return new ResponseEntity<>("Registro de admin exitoso", HttpStatus.OK);
+        users.setRoles(Collections.singletonList(roles));
+        usuariosRepository.save(users);
+        return new ResponseEntity<>("Successful admin registration", HttpStatus.OK);
     }
-    //Metodo para poder logear un usuario y obtener un token
+    // Method to be able to log in a user and get a token
     @PostMapping("login")
-    public ResponseEntity<DtoAuthRespuesta> login(@RequestBody DtoLogin dtoLogin){
+    public ResponseEntity<DtoAuthResponse> login(@RequestBody DtoLogin dtoLogin){
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 dtoLogin.getUsername(),dtoLogin.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        String token = jwtGenerador.generarToken(authentication);
-        return new ResponseEntity<>(new DtoAuthRespuesta(token), HttpStatus.OK);
+        String token = jwtGenerador.generateToken(authentication);
+        return new ResponseEntity<>(new DtoAuthResponse(token), HttpStatus.OK);
     }
 }

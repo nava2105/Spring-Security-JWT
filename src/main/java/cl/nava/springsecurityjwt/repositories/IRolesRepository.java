@@ -8,6 +8,6 @@ import java.util.Optional;
 
 @Repository
 public interface IRolesRepository extends JpaRepository<Roles, Long> {
-    //Método para buscar un role por su nombre en nuestra base de datos
+    // Method to search for a role by name in our database
     Optional<Roles> findByName(String name);
 }

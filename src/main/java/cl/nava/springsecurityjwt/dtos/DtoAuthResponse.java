@@ -2,13 +2,13 @@ package cl.nava.springsecurityjwt.dtos;
 
 import lombok.Data;
 
-//Esta clase sera la que nos devolbera la información con el token y el tipo que tenga este
+// This class will be the one that will return the information with the token and the type of the token.
 @Data
-public class DtoAuthRespuesta {
+public class DtoAuthResponse {
     private String accessToken;
     private String tokenType = "Bearer ";
 
-    public DtoAuthRespuesta(String accessToken) {
+    public DtoAuthResponse(String accessToken) {
         this.accessToken = accessToken;
     }
 }

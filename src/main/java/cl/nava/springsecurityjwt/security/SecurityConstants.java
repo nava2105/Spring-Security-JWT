@@ -1,6 +1,6 @@
 package cl.nava.springsecurityjwt.security;
 
-public class ConstantesSeguridad {
+public class SecurityConstants {
     public static final long JWT_EXPIRATION_TOKEN = 600000;
-    public static final String JWT_FIRMA = "firma";
+    public static final String JWT_FIRMA = "signature";
 }

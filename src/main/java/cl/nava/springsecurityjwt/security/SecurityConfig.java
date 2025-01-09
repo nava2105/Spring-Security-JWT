@@ -22,22 +22,22 @@ public class SecurityConfig {
     public SecurityConfig(JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint){
         this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
     }
-    //El siguiente bean va a encargarse de verificarl la información de los usuarios que se loguearan en nuestra api
+    // The following bean will be in charge of verifying the information of the users that log in our api
     @Bean
     AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception{
         return authenticationConfiguration.getAuthenticationManager();
     }
-    //Con este bean nos encargaremos de encriptar todas nuestras contraseñas
+    // With this bean we will take care of encrypting all our passwords.
     @Bean
     PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
-    //Este bean incorporara el filtro de seguridad de jason web token que creamos en JwtAuthenticationFilter
+    // This bean will incorporate the jason web token security filter that we created in JwtAuthenticationFilter.
     @Bean
     JwtAuthenticationFilter jwtAuthenticationFilter(){
         return new JwtAuthenticationFilter();
     }
-    //Bean el cual va a establecer una cadena de filtros de seguridad en nuestra aplicación, es aqui donde determinaremos los permisos segun los roles de usuario para acceder a nuestra aplicacion
+    // Bean which will establish a chain of security filters in our application, it is here where we will determine the permissions according to the user roles to access our application.
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
         http

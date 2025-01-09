@@ -1,7 +1,7 @@
 package cl.nava.springsecurityjwt.service;
 
-import cl.nava.springsecurityjwt.models.Usuarios;
-import cl.nava.springsecurityjwt.repositories.IUsuariosRepository;
+import cl.nava.springsecurityjwt.models.Users;
+import cl.nava.springsecurityjwt.repositories.IUsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,27 +10,27 @@ import java.util.Optional;
 
 @Service
 public class UserService {
-    private IUsuariosRepository usuariosRepo;
+    private IUsersRepository usuariosRepo;
 
     @Autowired
-    public UserService(IUsuariosRepository usuariosRepo) {
+    public UserService(IUsersRepository usuariosRepo) {
         this.usuariosRepo = usuariosRepo;
     }
 
-    public void crear(Usuarios usuarios) {
-        usuariosRepo.save(usuarios);
+    public void crear(Users users) {
+        usuariosRepo.save(users);
     }
 
-    public List<Usuarios> readAll() {
+    public List<Users> readAll() {
         return usuariosRepo.findAll();
     }
 
-    public Optional<Usuarios> readOne(long id) {
+    public Optional<Users> readOne(long id) {
         return usuariosRepo.findById(id);
     }
 
-    public void update(Usuarios usuarios) {
-        usuariosRepo.save(usuarios);
+    public void update(Users users) {
+        usuariosRepo.save(users);
     }
 
     public void delete(Long id) {

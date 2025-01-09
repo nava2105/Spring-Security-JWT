@@ -16,7 +16,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.List;
 
-//La función de esta clase sera validar la informacion del token y si esto es exitoso establecera la autentificación de un usuario en la solicitud
+// The function of this class will be to validate the token information and if this is successful it will establish the authentication of a user in the request.
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Autowired
@@ -24,7 +24,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Autowired
     private JwtGenerador jwtGenerador;
 
-    private String obtenerTokenDeSolicitud(HttpServletRequest request){
+    private String getApplicationToken(HttpServletRequest request){
         String bearerToken = request.getHeader("Authorization");
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")){
             return bearerToken.substring(7, bearerToken.length());
@@ -35,9 +35,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
-        String token = obtenerTokenDeSolicitud(request);
-        if (StringUtils.hasText(token) && jwtGenerador.validarToken(token)){
-            String username = jwtGenerador.obtenerUsernameDeJwt(token);
+        String token = getApplicationToken(request);
+        if (StringUtils.hasText(token) && jwtGenerador.validateToken(token)){
+            String username = jwtGenerador.getUserNameFromJwt(token);
             UserDetails userDetails = customUsersDetailService.loadUserByUsername(username);
             List<String> userRoles = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList();
             if (userRoles.contains("USER") || userRoles.contains("ADMIN")){
