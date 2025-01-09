@@ -23,14 +23,14 @@ public class JwtGenerador {
                 .setSubject(userName)
                 .setIssuedAt(new Date())
                 .setExpiration(tokenExpiration)
-                .signWith(SignatureAlgorithm.HS512, SecurityConstants.JWT_FIRMA)
+                .signWith(SignatureAlgorithm.HS512, SecurityConstants.JWT_SIGNATURE)
                 .compact();
     }
 
     // Method to extract a username from a token
     public String getUserNameFromJwt(String token){
         Claims claims= Jwts.parser()
-                .setSigningKey(SecurityConstants.JWT_FIRMA)
+                .setSigningKey(SecurityConstants.JWT_SIGNATURE)
                 .parseClaimsJws(token)
                 .getBody();
         return claims.getSubject();
@@ -39,7 +39,7 @@ public class JwtGenerador {
     // Method to validate the token
     public boolean validateToken(String token){
         try {
-            Jwts.parser().setSigningKey(SecurityConstants.JWT_FIRMA).parseClaimsJws(token);
+            Jwts.parser().setSigningKey(SecurityConstants.JWT_SIGNATURE).parseClaimsJws(token);
             return true;
         }catch (Exception e){
             throw new AuthenticationCredentialsNotFoundException("Jwt has expired or is incorrect");
