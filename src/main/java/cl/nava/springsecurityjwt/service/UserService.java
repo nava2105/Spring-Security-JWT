@@ -10,31 +10,31 @@ import java.util.Optional;
 
 @Service
 public class UserService {
-    private IUsersRepository usuariosRepo;
+    private IUsersRepository usersRepo;
 
     @Autowired
-    public UserService(IUsersRepository usuariosRepo) {
-        this.usuariosRepo = usuariosRepo;
+    public UserService(IUsersRepository usersRepo) {
+        this.usersRepo = usersRepo;
     }
 
-    public void crear(Users users) {
-        usuariosRepo.save(users);
+    public void create(Users users) {
+        usersRepo.save(users);
     }
 
     public List<Users> readAll() {
-        return usuariosRepo.findAll();
+        return usersRepo.findAll();
     }
 
     public Optional<Users> readOne(long id) {
-        return usuariosRepo.findById(id);
+        return usersRepo.findById(id);
     }
 
     public void update(Users users) {
-        usuariosRepo.save(users);
+        usersRepo.save(users);
     }
 
     public void delete(Long id) {
-        usuariosRepo.deleteById(id);
+        usersRepo.deleteById(id);
     }
 
 }
