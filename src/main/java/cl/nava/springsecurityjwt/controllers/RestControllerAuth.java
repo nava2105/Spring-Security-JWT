@@ -3,6 +3,7 @@ package cl.nava.springsecurityjwt.controllers;
 import cl.nava.springsecurityjwt.dtos.DtoAuthResponse;
 import cl.nava.springsecurityjwt.dtos.DtoLogin;
 import cl.nava.springsecurityjwt.dtos.DtoRegister;
+import cl.nava.springsecurityjwt.dtos.DtoAssignRole;
 import cl.nava.springsecurityjwt.models.Roles;
 import cl.nava.springsecurityjwt.models.Users;
 import cl.nava.springsecurityjwt.repositories.IRolesRepository;
@@ -76,5 +77,19 @@ public class RestControllerAuth {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String token = jwtGenerador.generateToken(authentication);
         return new ResponseEntity<>(new DtoAuthResponse(token), HttpStatus.OK);
+    }
+    // Method to assign a new role to an existing user
+    @PostMapping("assignRole")
+    public ResponseEntity<String> assignRole(@RequestBody DtoAssignRole dtoAssignRole) {
+        Users user = userRepository.findByUserName(dtoAssignRole.getUsername())
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        Roles role = rolesRepository.findByName(dtoAssignRole.getRole())
+                .orElseThrow(() -> new IllegalArgumentException("Role not found"));
+        if (user.getRoles().contains(role)) {
+            return new ResponseEntity<>("Role already assigned to the user", HttpStatus.BAD_REQUEST);
+        }
+        user.getRoles().add(role);
+        userRepository.save(user);
+        return new ResponseEntity<>("Role assigned successfully", HttpStatus.OK);
     }
 }
