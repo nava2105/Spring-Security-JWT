@@ -1,10 +1,10 @@
 package cl.nava.springsecurityjwt.controllers;
 
 import cl.nava.springsecurityjwt.dtos.*;
+import cl.nava.springsecurityjwt.factories.IRoleFactory;
+import cl.nava.springsecurityjwt.factories.IUserFactory;
 import cl.nava.springsecurityjwt.models.Roles;
 import cl.nava.springsecurityjwt.models.Users;
-import cl.nava.springsecurityjwt.repositories.IRolesRepository;
-import cl.nava.springsecurityjwt.repositories.IUsersRepository;
 import cl.nava.springsecurityjwt.security.JwtGenerador;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,89 +24,96 @@ import java.util.Collections;
 public class RestControllerAuth {
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
-    private final IRolesRepository rolesRepository;
-    private final IUsersRepository userRepository;
+    private final IRoleFactory roleFactory;
+    private final IUserFactory userFactory;
     private final JwtGenerador jwtGenerador;
 
     @Autowired
-    public RestControllerAuth(AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder, IRolesRepository rolesRepository, IUsersRepository userRepository, JwtGenerador jwtGenerador) {
+    public RestControllerAuth(AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder,
+                              IRoleFactory roleFactory, IUserFactory userFactory, JwtGenerador jwtGenerador) {
         this.authenticationManager = authenticationManager;
         this.passwordEncoder = passwordEncoder;
-        this.rolesRepository = rolesRepository;
-        this.userRepository = userRepository;
+        this.roleFactory = roleFactory;
+        this.userFactory = userFactory;
         this.jwtGenerador = jwtGenerador;
     }
-    // Method to be able to register users with role user
+
+    // Method to register users with the "USER" role
     @PostMapping("register")
-    public ResponseEntity<String> register(@RequestBody DtoRegister dtoRegister){
-        if (userRepository.existsByUserName(dtoRegister.getUsername())) {
+    public ResponseEntity<String> register(@RequestBody DtoRegister dtoRegister) {
+        if (userFactory.existsByUserName(dtoRegister.getUsername())) {
             return new ResponseEntity<>("The user already exists, try another one", HttpStatus.BAD_REQUEST);
         }
         Users users = new Users();
         users.setUserName(dtoRegister.getUsername());
         users.setPassword(passwordEncoder.encode(dtoRegister.getPassword()));
-        Roles roles = rolesRepository.findByName("USER").orElseThrow(() -> new IllegalArgumentException("Role USER not found"));
+        Roles roles = roleFactory.findByName("USER").orElseThrow(() -> new IllegalArgumentException("Role USER not found"));
         users.setRoles(Collections.singletonList(roles));
-        userRepository.save(users);
+        userFactory.create(users);
         return new ResponseEntity<>("Successful user registration", HttpStatus.OK);
     }
-    // Method to be able to register users with admin role
+
+    // Method to register users with the "ADMIN" role
     @PostMapping("register/admin")
-    public ResponseEntity<String> registerAdmin(@RequestBody DtoRegister dtoRegister){
-        if (userRepository.existsByUserName(dtoRegister.getUsername())) {
+    public ResponseEntity<String> registerAdmin(@RequestBody DtoRegister dtoRegister) {
+        if (userFactory.existsByUserName(dtoRegister.getUsername())) {
             return new ResponseEntity<>("The user already exists, try another one", HttpStatus.BAD_REQUEST);
         }
         Users users = new Users();
         users.setUserName(dtoRegister.getUsername());
         users.setPassword(passwordEncoder.encode(dtoRegister.getPassword()));
-        Roles roles = rolesRepository.findByName("ADMIN").orElseThrow(() -> new IllegalArgumentException("Role USER not found"));
+        Roles roles = roleFactory.findByName("ADMIN").orElseThrow(() -> new IllegalArgumentException("Role ADMIN not found"));
         users.setRoles(Collections.singletonList(roles));
-        userRepository.save(users);
+        userFactory.create(users);
         return new ResponseEntity<>("Successful admin registration", HttpStatus.OK);
     }
-    // Method to be able to log in a user and get a token
+
+    // Method to log in a user and generate a token
     @PostMapping("login")
-    public ResponseEntity<DtoAuthResponse> login(@RequestBody DtoLogin dtoLogin){
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                dtoLogin.getUsername(),dtoLogin.getPassword()));
+    public ResponseEntity<DtoAuthResponse> login(@RequestBody DtoLogin dtoLogin) {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(dtoLogin.getUsername(), dtoLogin.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String token = jwtGenerador.generateToken(authentication);
         return new ResponseEntity<>(new DtoAuthResponse(token), HttpStatus.OK);
     }
-    // Method to assign a new role to an existing user
+
+    // Method to assign a role to an existing user
     @PostMapping("assign/role")
     public ResponseEntity<String> assignRole(@RequestBody DtoAssignRole dtoAssignRole) {
-        Users user = userRepository.findByUserName(dtoAssignRole.getUsername())
+        Users user = userFactory.findByUserName(dtoAssignRole.getUsername())
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
-        Roles role = rolesRepository.findByName(dtoAssignRole.getRole())
+        Roles role = roleFactory.findByName(dtoAssignRole.getRole())
                 .orElseThrow(() -> new IllegalArgumentException("Role not found"));
+
         if (user.getRoles().contains(role)) {
             return new ResponseEntity<>("Role already assigned to the user", HttpStatus.BAD_REQUEST);
         }
         user.getRoles().add(role);
-        userRepository.save(user);
+        userFactory.update(user);
         return new ResponseEntity<>("Role assigned successfully", HttpStatus.OK);
     }
+
+    // Method to validate JWT token
     @GetMapping("validate/token")
     public ResponseEntity<?> validateToken() {
         return new ResponseEntity<>("Valid token", HttpStatus.OK);
     }
+
+    // Method to extract user ID from token
     @GetMapping("user_id/token")
     public ResponseEntity<DtoUserIdFromToken> userIdFromToken(HttpServletRequest request) {
         String authHeader = request.getHeader("Authorization");
-
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-
         String token = authHeader.substring(7); // Remove "Bearer " prefix
         try {
             if (jwtGenerador.validateToken(token)) {
                 String username = jwtGenerador.getUserNameFromJwt(token);
-                Long userId = userRepository.findByUserName(username)
+                Long userId = userFactory.findByUserName(username)
                         .map(Users::getUserId)
                         .orElseThrow(() -> new IllegalArgumentException("User not found"));
-
                 DtoUserIdFromToken dtoUserIdFromToken = new DtoUserIdFromToken(userId);
                 return new ResponseEntity<>(dtoUserIdFromToken, HttpStatus.OK);
             }

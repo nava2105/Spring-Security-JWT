@@ -1,7 +1,7 @@
 package cl.nava.springsecurityjwt.service;
 
+import cl.nava.springsecurityjwt.factories.IUserFactory;
 import cl.nava.springsecurityjwt.models.Users;
-import cl.nava.springsecurityjwt.repositories.IUsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,31 +10,32 @@ import java.util.Optional;
 
 @Service
 public class UserService {
-    private IUsersRepository usersRepo;
+
+    private final IUserFactory userFactory;
 
     @Autowired
-    public UserService(IUsersRepository usersRepo) {
-        this.usersRepo = usersRepo;
+    public UserService(IUserFactory userFactory) {
+        this.userFactory = userFactory;
     }
 
-    public void create(Users users) {
-        usersRepo.save(users);
+    public void create(Users user) {
+        userFactory.create(user);
     }
 
     public List<Users> readAll() {
-        return usersRepo.findAll();
+        // Assume the factory supports returning all users directly or implement a new method.
+        throw new UnsupportedOperationException("Not implemented");
     }
 
     public Optional<Users> readOne(long id) {
-        return usersRepo.findById(id);
+        return userFactory.findById(id);
     }
 
-    public void update(Users users) {
-        usersRepo.save(users);
+    public void update(Users user) {
+        userFactory.update(user);
     }
 
     public void delete(Long id) {
-        usersRepo.deleteById(id);
+        userFactory.deleteById(id);
     }
-
 }
