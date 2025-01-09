@@ -90,7 +90,7 @@ public class RestControllerAuth {
         return new ResponseEntity<>("Role assigned successfully", HttpStatus.OK);
     }
     @GetMapping("validateToken")
-    public ResponseEntity<?> validateTokenFromExternalApi() {
+    public ResponseEntity<?> validateToken() {
         return new ResponseEntity<>("Valid token", HttpStatus.OK);
     }
 }

@@ -149,6 +149,17 @@ Once the application is up and running, you can interact with the API by perform
   }
   ```
 
+### Validate Token:
+- Endpoint: `/api/auth/validateToken`
+- Headers:
+  ```
+  Authorization: Bearer your_jwt_token
+  ```
+- Payload:
+  ```json
+  {}
+  ```
+
 ---
 
 ## Endpoints
@@ -175,6 +186,11 @@ Below is a comprehensive list of the endpoints included in the project:
   - `POST /api/auth/assignRole`
   - Allows admins to assign roles (`ADMIN`, `USER`) to existing users.
   - Requires `ADMIN` privilege.
+
+- **Validate Token**
+  - `GET /api/auth/validateToken`
+  - Allows other APIs to validate the validity of the token.
+  - Requires the JWT.
 
 ---
 
