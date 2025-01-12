@@ -78,26 +78,28 @@ public class RestControllerAuth {
         return new ResponseEntity<>(new DtoAuthResponse(token), HttpStatus.OK);
     }
 
-    // Method to assign a role to an existing user
-    @PostMapping("assign/role")
-    public ResponseEntity<String> assignRole(@RequestBody DtoAssignRole dtoAssignRole) {
-        Users user = userFactory.findByUserName(dtoAssignRole.getUsername())
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
-        Roles role = roleFactory.findByName(dtoAssignRole.getRole())
-                .orElseThrow(() -> new IllegalArgumentException("Role not found"));
-
-        if (user.getRoles().contains(role)) {
-            return new ResponseEntity<>("Role already assigned to the user", HttpStatus.BAD_REQUEST);
+    // Method to update password from user ID stored in token
+    @PostMapping("password/update")
+    public ResponseEntity<String> updatePassword(HttpServletRequest request, @RequestBody DtoChangePassword dtoChangePassword) {
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return new ResponseEntity<>("Missing or invalid Authorization header", HttpStatus.BAD_REQUEST);
         }
-        user.getRoles().add(role);
-        userFactory.update(user);
-        return new ResponseEntity<>("Role assigned successfully", HttpStatus.OK);
-    }
-
-    // Method to validate JWT token
-    @GetMapping("validate/token")
-    public ResponseEntity<?> validateToken() {
-        return new ResponseEntity<>("Valid token", HttpStatus.OK);
+        String token = authHeader.substring(7);
+        try {
+            if (!jwtGenerador.validateToken(token)) {
+                return new ResponseEntity<>("Invalid token", HttpStatus.UNAUTHORIZED);
+            }
+            String username = jwtGenerador.getUserNameFromJwt(token);
+            Users user = userFactory.findByUserName(username)
+                    .orElseThrow(() -> new IllegalArgumentException("User not found"));
+            String encodedPassword = passwordEncoder.encode(dtoChangePassword.getPassword());
+            user.setPassword(encodedPassword);
+            userFactory.update(user);
+            return new ResponseEntity<>("Password updated successfully", HttpStatus.OK);
+        } catch (Exception ex) {
+            return new ResponseEntity<>("Error updating password: " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     // Method to extract user ID from token

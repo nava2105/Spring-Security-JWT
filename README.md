@@ -135,8 +135,8 @@ Once the application is up and running, you can interact with the API by perform
   }
   ```
 
-### Assign Role (Admin Only):
-- Endpoint: `/api/auth/assign/role`
+### Validate Token:
+- Endpoint: `/api/auth/password/update`
 - Headers:
   ```
   Authorization: Bearer your_jwt_token
@@ -144,20 +144,8 @@ Once the application is up and running, you can interact with the API by perform
 - Payload:
   ```json
   {
-    "username": "existing_username",
-    "role": "new_role (ADMIN or USER)" 
+    "password": "new_password"
   }
-  ```
-
-### Validate Token:
-- Endpoint: `/api/auth/validate/token`
-- Headers:
-  ```
-  Authorization: Bearer your_jwt_token
-  ```
-- Payload:
-  ```json
-  {}
   ```
 
 ### Get User Id From Token:
@@ -194,13 +182,8 @@ Below is a comprehensive list of the endpoints included in the project:
   - Requires `ADMIN` privilege.
 
 - **Assign Role**
-  - `POST /api/auth/assign/role`
-  - Allows admins to assign roles (`ADMIN`, `USER`) to existing users.
-  - Requires `ADMIN` privilege.
-
-- **Validate Token**
-  - `GET /api/auth/validate/token`
-  - Allows other APIs to validate the validity of the token.
+  - `POST /api/auth/password/update`
+  - Allows users to update their password.
   - Requires the JWT.
 
 - **Get User Id From Token**
