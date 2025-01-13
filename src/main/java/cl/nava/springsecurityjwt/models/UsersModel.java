@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(name = "user")
-public class Users {
+public class UsersModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
@@ -24,6 +24,6 @@ public class Users {
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "user_id")
     , inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "role_id"))
-    private List<Roles> roles = new ArrayList<>();
+    private List<RolesModel> roles = new ArrayList<>();
 
 }

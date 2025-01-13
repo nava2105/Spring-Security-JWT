@@ -1,7 +1,7 @@
 package cl.nava.springsecurityjwt.initializers;
 
-import cl.nava.springsecurityjwt.models.Roles;
-import cl.nava.springsecurityjwt.models.Users;
+import cl.nava.springsecurityjwt.models.RolesModel;
+import cl.nava.springsecurityjwt.models.UsersModel;
 import cl.nava.springsecurityjwt.repositories.IRolesRepository;
 import cl.nava.springsecurityjwt.repositories.IUsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,10 +31,10 @@ public class AdminInitializer implements CommandLineRunner {
     public void run(String... args) {
         // Check if the role "ADMIN" exists, if not, it is created.
         if (usersRepository.findByUserName("admin").isEmpty()) {
-            Users adminUser = new Users();
+            UsersModel adminUser = new UsersModel();
             adminUser.setUserName("admin");
             adminUser.setPassword(passwordEncoder.encode("admin"));
-            Roles adminRole = rolesRepository.findByName("ADMIN").orElseThrow(() -> new IllegalArgumentException("Role USER not found"));
+            RolesModel adminRole = rolesRepository.findByName("ADMIN").orElseThrow(() -> new IllegalArgumentException("Role USER not found"));
             adminUser.setRoles(Collections.singletonList(adminRole));
             usersRepository.save(adminUser);
             System.out.println("User 'ADMIN' created.");

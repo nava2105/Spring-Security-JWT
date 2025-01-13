@@ -1,6 +1,6 @@
 package cl.nava.springsecurityjwt.factories;
 
-import cl.nava.springsecurityjwt.models.Users;
+import cl.nava.springsecurityjwt.models.UsersModel;
 import cl.nava.springsecurityjwt.repositories.IUsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -18,17 +18,17 @@ public class UserFactory implements IUserFactory {
     }
 
     @Override
-    public void create(Users user) {
+    public void create(UsersModel user) {
         usersRepository.save(user);
     }
 
     @Override
-    public Optional<Users> findByUserName(String username) {
+    public Optional<UsersModel> findByUserName(String username) {
         return usersRepository.findByUserName(username);
     }
 
     @Override
-    public Optional<Users> findById(Long id) {
+    public Optional<UsersModel> findById(Long id) {
         return usersRepository.findById(id);
     }
 
@@ -38,7 +38,7 @@ public class UserFactory implements IUserFactory {
     }
 
     @Override
-    public void update(Users user) {
+    public void update(UsersModel user) {
         usersRepository.save(user);
     }
 

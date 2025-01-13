@@ -3,8 +3,8 @@ package cl.nava.springsecurityjwt.controllers;
 import cl.nava.springsecurityjwt.dtos.*;
 import cl.nava.springsecurityjwt.factories.IRoleFactory;
 import cl.nava.springsecurityjwt.factories.IUserFactory;
-import cl.nava.springsecurityjwt.models.Roles;
-import cl.nava.springsecurityjwt.models.Users;
+import cl.nava.springsecurityjwt.models.RolesModel;
+import cl.nava.springsecurityjwt.models.UsersModel;
 import cl.nava.springsecurityjwt.security.JwtGenerador;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,10 +44,10 @@ public class RestControllerAuth {
         if (userFactory.existsByUserName(dtoRegister.getUsername())) {
             return new ResponseEntity<>("The user already exists, try another one", HttpStatus.BAD_REQUEST);
         }
-        Users users = new Users();
+        UsersModel users = new UsersModel();
         users.setUserName(dtoRegister.getUsername());
         users.setPassword(passwordEncoder.encode(dtoRegister.getPassword()));
-        Roles roles = roleFactory.findByName("USER").orElseThrow(() -> new IllegalArgumentException("Role USER not found"));
+        RolesModel roles = roleFactory.findByName("USER").orElseThrow(() -> new IllegalArgumentException("Role USER not found"));
         users.setRoles(Collections.singletonList(roles));
         userFactory.create(users);
         return new ResponseEntity<>("Successful user registration", HttpStatus.OK);
@@ -59,10 +59,10 @@ public class RestControllerAuth {
         if (userFactory.existsByUserName(dtoRegister.getUsername())) {
             return new ResponseEntity<>("The user already exists, try another one", HttpStatus.BAD_REQUEST);
         }
-        Users users = new Users();
+        UsersModel users = new UsersModel();
         users.setUserName(dtoRegister.getUsername());
         users.setPassword(passwordEncoder.encode(dtoRegister.getPassword()));
-        Roles roles = roleFactory.findByName("ADMIN").orElseThrow(() -> new IllegalArgumentException("Role ADMIN not found"));
+        RolesModel roles = roleFactory.findByName("ADMIN").orElseThrow(() -> new IllegalArgumentException("Role ADMIN not found"));
         users.setRoles(Collections.singletonList(roles));
         userFactory.create(users);
         return new ResponseEntity<>("Successful admin registration", HttpStatus.OK);
@@ -91,7 +91,7 @@ public class RestControllerAuth {
                 return new ResponseEntity<>("Invalid token", HttpStatus.UNAUTHORIZED);
             }
             String username = jwtGenerador.getUserNameFromJwt(token);
-            Users user = userFactory.findByUserName(username)
+            UsersModel user = userFactory.findByUserName(username)
                     .orElseThrow(() -> new IllegalArgumentException("User not found"));
             String encodedPassword = passwordEncoder.encode(dtoChangePassword.getPassword());
             user.setPassword(encodedPassword);
@@ -114,7 +114,7 @@ public class RestControllerAuth {
             if (jwtGenerador.validateToken(token)) {
                 String username = jwtGenerador.getUserNameFromJwt(token);
                 Long userId = userFactory.findByUserName(username)
-                        .map(Users::getUserId)
+                        .map(UsersModel::getUserId)
                         .orElseThrow(() -> new IllegalArgumentException("User not found"));
                 DtoUserIdFromToken dtoUserIdFromToken = new DtoUserIdFromToken(userId);
                 return new ResponseEntity<>(dtoUserIdFromToken, HttpStatus.OK);

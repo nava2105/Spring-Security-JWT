@@ -1,6 +1,6 @@
 package cl.nava.springsecurityjwt.factories;
 
-import cl.nava.springsecurityjwt.models.Roles;
+import cl.nava.springsecurityjwt.models.RolesModel;
 import cl.nava.springsecurityjwt.repositories.IRolesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -18,12 +18,8 @@ public class RoleFactory implements IRoleFactory {
     }
 
     @Override
-    public Optional<Roles> findByName(String name) {
+    public Optional<RolesModel> findByName(String name) {
         return rolesRepository.findByName(name);
     }
 
-    @Override
-    public void save(Roles role) {
-        rolesRepository.save(role);
-    }
 }
