@@ -190,7 +190,7 @@ Below is a comprehensive list of the endpoints included in the project:
   - `GET /api/auth/user_id/token`
   - Allows other APIs to validate the validity of the token.
   - Requires the JWT.
-  - 
+
 ---
 
 ## Configuration and Notes
