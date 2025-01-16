@@ -193,6 +193,16 @@ Below is a comprehensive list of the endpoints included in the project:
 
 ---
 
+## Environment Variables
+Below is the structure for the `.env` file, which contains the environment variables for configuring the database:
+
+| **Variable**      | **Description**                  | **Example**                             |
+|-------------------|----------------------------------|-----------------------------------------|
+| DATABASE_USERNAME | Username for the database        | root                                    |
+| DATABASE_PASSWORD | Password for the database        | password?                               |
+| DATABASE_URL      | JDBC URL for connecting to MySQL | jdbc:mysql://localhost:3307/table_users |
+---
+
 ## Configuration and Notes
 - **Application Properties**:
   - Located in the `src/main/resources/application.properties` file.
